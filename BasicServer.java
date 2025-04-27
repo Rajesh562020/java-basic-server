@@ -14,11 +14,24 @@ public class BasicServer {
         server.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                String response = "Hello, World!";
-                exchange.sendResponseHeaders(200, response.getBytes().length);
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
+                try {
+                    // Introduce a crash: divide by zero!
+                    int result = 5 / 0;
+                    String response = "Hello, World!";
+                    exchange.sendResponseHeaders(200, response.getBytes().length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(response.getBytes());
+                    os.close();
+                } catch (Exception e) {
+                    e.printStackTrace(); // NOW you'll see errors in Terminal 🚀
+
+                    // Respond with 500 status properly
+                    String response = "yo mr white!";
+                    exchange.sendResponseHeaders(500, response.getBytes().length);
+                    OutputStream os = exchange.getResponseBody();
+                    os.write(response.getBytes());
+                    os.close();
+                }
             }
         });
 
